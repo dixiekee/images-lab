@@ -3,8 +3,14 @@ package driver;
 import java.io.*;
 
 import contrast.*;
+import hadoop.ImageMapper;
+import hadoop.ImageReducer;
 import image.*;
 import transform.*;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
+import org.apache.hadoop.mapreduce.Job;
 
 /**
  * The main class for the contrast enhancer. 
@@ -51,6 +57,17 @@ public class Driver
         if(outDirectory.exists())
             throw new IllegalArgumentException("The output directory <" + outDirectory 
                     + "> already exists.");
+        
+        // Writing random Hadoop stuff here. 
+        
+        Configuration conf = new Configuration();
+        Job job = new Job(conf, "image dups remover");
+        job.setJarByClass(Driver.class);
+        job.setInputFormatClass(SequenceFileInputFormat.class);
+        job.setOutputKeyClass(ImageMapper.class);
+        job.setOutputValueClass(ImageReducer.class);
+        
+        // Ends here. Bleh.
 
         File[] images = imageDirectory.listFiles();
 
