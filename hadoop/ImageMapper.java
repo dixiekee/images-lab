@@ -10,9 +10,10 @@ import org.apache.hadoop.mapred.MapReduceBase;
 import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.io.BytesWritable;
 
 public class ImageMapper extends MapReduceBase 
-		implements Mapper<IntWritable, ImageWritable, IntWritable, ImageWritable> {
+		implements Mapper<IntWritable, ImageWritable, IntWritable, BytesWritable> {
 
 		private int[][] makePixelsArr(byte[] bytes, int height, int width) {
 			int[][] pixels = new int[height][width];
@@ -31,10 +32,10 @@ public class ImageMapper extends MapReduceBase
 	
 		@Override
 		public void map(IntWritable key, ImageWritable value,
-				OutputCollector<IntWritable, ImageWritable> collector, Reporter reporter)
+				OutputCollector<IntWritable, BytesWritable> collector, Reporter reporter)
 				throws IOException {
 			if (key.get() == 0) {
-				collector.collect(key, value);
+				collector.collect(key, new BytesWritable(value.getBytes()));
 				return;
 			}
 	
@@ -57,9 +58,9 @@ public class ImageMapper extends MapReduceBase
 						byteCount++;
 					}
 				}
-				value.setBytes(newBytes);
-				
-				collector.collect(key, value);
+
+        BytesWritable output = new BytesWritable(newBytes);
+				collector.collect(key, output);
 				
 				
 				

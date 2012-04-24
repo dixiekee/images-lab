@@ -41,7 +41,7 @@ public class ImageInputFormat extends FileInputFormat<IntWritable, ImageWritable
 				int linesLeft = height;
 				int position = 0;
 				while (linesLeft > 0) {
-					linesPerSplit = Math.min(linesLeft, 129);
+					linesPerSplit = Math.min(linesLeft, 33);
 					int frontPadding; //how many rows in front of the stuff you care about
 					int backPadding; //how many rows behind the stuff you care about
 					if (position - padding < 0)
@@ -54,7 +54,7 @@ public class ImageInputFormat extends FileInputFormat<IntWritable, ImageWritable
 						backPadding = padding;
 					linesLeft -= linesPerSplit;
 					ImageSplit split = new ImageSplit(offset + (position - frontPadding)*width, 
-							height, width, frontPadding, linesPerSplit + frontPadding + backPadding);
+							height, width, frontPadding, linesPerSplit);
 					splits.add(split);
 					position+=linesPerSplit;
 				}

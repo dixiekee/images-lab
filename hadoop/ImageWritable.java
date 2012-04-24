@@ -22,8 +22,8 @@ public class ImageWritable implements Writable{
 	public void readFields(DataInput in) throws IOException {
 		width = in.readInt();
 		height = in.readInt();
-		byte[] b = new byte[height * width];
-		in.readFully(b);
+	  bytes = new byte[height * width];
+		in.readFully(bytes);
 		startRow = in.readInt();
 		numRows = in.readInt();
 	}

@@ -26,7 +26,6 @@ public class Driver
      */
     public static void main(String[] args) throws IOException, ImageFormatException
     {
-	System.out.println(Arrays.toString(args));
         if(args.length != 3)
         {
             System.out.println("Usage: java driver.Driver <input directory>" +
@@ -40,18 +39,18 @@ public class Driver
         // Writing random Hadoop stuff here. 
         
         JobConf job = new JobConf(Driver.class);
-	job.set("mapred.child.java.opts", "-Xmx1500m");
-	job.setJarByClass(Driver.class);
+	      job.set("mapred.child.java.opts", "-Xmx1500m");
+	      job.setJarByClass(Driver.class);
         job.setInputFormat(ImageInputFormat.class);
-	job.setOutputFormat(ImageOutputFormat.class);
+	      job.setOutputFormat(ImageOutputFormat.class);
         job.setOutputKeyClass(IntWritable.class);
-        job.setOutputValueClass(ImageWritable.class);
+        job.setOutputValueClass(BytesWritable.class);
       	job.setMapperClass(ImageMapper.class);
-	job.setReducerClass(ImageReducer.class);  
-        // Ends here. Bleh.
-	FileInputFormat.addInputPaths(job, args[1]);
-	FileOutputFormat.setOutputPath(job, new Path(args[2]));
-	JobClient.runJob(job);
+	      job.setReducerClass(ImageReducer.class);  
+              // Ends here. Bleh.
+	      FileInputFormat.addInputPaths(job, args[1]);
+	      FileOutputFormat.setOutputPath(job, new Path(args[2]));
+	      JobClient.runJob(job);
     }
 }
     
