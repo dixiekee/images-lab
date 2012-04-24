@@ -40,13 +40,21 @@ public class ImageMapper extends MapReduceBase
 			}
 	
 			//create 2D array of pixels from 1D array of bytes
-			int pixels[][] = makePixelsArr(value.getBytes(), value.getHeight(), value.getWidth());
+			byte[] bytes = value.getBytes();
+			int pixels[][] = makePixelsArr(bytes, value.getHeight(), value.getWidth());
+System.out.println("IN IMAGEMAPPER, PIXELS[][], HEIGHT= " + value.getHeight() + " WIDTH= " + value.getWidth());
 			
 			//construct a PGMImage from the 2D array of pixels
 			PGMImage image = new PGMImage(255, pixels);
 			try {
 				//apply contrast enhacement
 				PGMImage enhancedImg = PGMContrast.contrastEnhance(image);
+
+				pixels = null;
+				image = null;
+
+				System.gc();
+
 				//get the relevant part of the image and store in newWritable
 				//set the pixels array for newWritable
 				int[][] newPixels = enhancedImg.getPixels();

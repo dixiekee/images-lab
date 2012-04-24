@@ -1,7 +1,7 @@
 public class ImageHeader {
 	int offset; //where the actual image starts
-	int height;
-	int width;
+	int height; //height of image (without header)
+	int width; //width of image (without header)
 	
 	public ImageHeader(int offset, int height, int width) {
 		this.offset = offset;

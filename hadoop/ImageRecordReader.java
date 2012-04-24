@@ -61,6 +61,8 @@ public class ImageRecordReader implements RecordReader<IntWritable, ImageWritabl
 	public boolean next(IntWritable key, ImageWritable value) throws IOException {
 		if (finished == false) {
 			key.set(split.getOffset() + split.getStartRow()*split.getWidth());
+System.out.println("HEIGHTTTTTTTT: " + split.getHeight());
+System.out.println("WIDTHHHHHHHHH: " + split.getWidth());
 			byte[] bytes = new byte[split.getHeight() * split.getWidth()];
 			try {
 				inputStream.readFully(split.getOffset(), bytes);

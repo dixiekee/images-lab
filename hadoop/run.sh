@@ -1,2 +1,2 @@
 hadoop fs -rmr output
-hadoop jar images.jar Driver /data/handout/mdb015.pgm output 
+hadoop jar images.jar Driver /data/large/mdb011.pgm output 
