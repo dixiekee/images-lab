@@ -46,7 +46,7 @@ public class ImageInputFormat
          // calculates the height of an ImageSplit, taking into account
          // the num rows needed above and below the image
          while (linesLeft > 0) {
-            linesPerSplit = Math.min(linesLeft, 67617/imgWidth);
+            linesPerSplit = Math.min((int)Math.sqrt(imgHeight),Math.min(linesLeft, 18500000/imgWidth));
             aboveRows = (position - padding < 0) ? position : padding;
             if (position + linesPerSplit + padding > imgHeight)
                belowRows = imgHeight - (position + linesPerSplit);
