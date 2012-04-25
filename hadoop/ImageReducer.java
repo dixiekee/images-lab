@@ -1,3 +1,4 @@
+/* andrew id, dkee, tszhang */
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -15,8 +16,6 @@ public class ImageReducer extends MapReduceBase
 	public void reduce(IntWritable key, Iterator<BytesWritable> itr,
 			OutputCollector<IntWritable, BytesWritable> collector, Reporter reporter)
 			throws IOException {
-		//collector.collect(key, null);
-		//collector.collect(key, itr.next());
 		while (itr.hasNext()) {
 			BytesWritable writable = itr.next();
 			

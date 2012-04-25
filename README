@@ -1,3 +1,8 @@
+INSTRUCTIONS:
+To compile, cd into the hadoop folder and execute the build.sh script. 
+To run the program, modify and execute the run.sh script to take the desired input 
+image, or use a command of the format shown in the run.sh script.
+
 First, you should really read the handout for information about how the contrast enhancement works.
 
 The main() that runs is in driver/Driver.java.

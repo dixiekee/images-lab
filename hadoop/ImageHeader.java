@@ -1,4 +1,5 @@
 /*
+ * andrew id: dkee, tszhang
  * A class that stores information contained in the header of an image
  */
 

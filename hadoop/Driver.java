@@ -1,3 +1,4 @@
+/* andrew id: dkee, tszhang */
 import java.io.*;
 import java.util.*;
 import org.apache.hadoop.conf.Configuration;
@@ -36,21 +37,19 @@ public class Driver
         }
 
         /* verify that input directory exists and the output directory doesn't. */
-        // Writing random Hadoop stuff here. 
         
         JobConf job = new JobConf(Driver.class);
-	      job.set("mapred.child.java.opts", "-Xmx1500m");
-	      job.setJarByClass(Driver.class);
+	job.set("mapred.child.java.opts", "-Xmx1500m");
+	job.setJarByClass(Driver.class);
         job.setInputFormat(ImageInputFormat.class);
-	      job.setOutputFormat(ImageOutputFormat.class);
+	job.setOutputFormat(ImageOutputFormat.class);
         job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(BytesWritable.class);
       	job.setMapperClass(ImageMapper.class);
-	      job.setReducerClass(ImageReducer.class);  
-              // Ends here. Bleh.
-	      FileInputFormat.addInputPaths(job, args[1]);
-	      FileOutputFormat.setOutputPath(job, new Path(args[2]));
-	      JobClient.runJob(job);
+	job.setReducerClass(ImageReducer.class);  
+	FileInputFormat.addInputPaths(job, args[1]);
+	FileOutputFormat.setOutputPath(job, new Path(args[2]));
+	JobClient.runJob(job);
     }
 }
     
