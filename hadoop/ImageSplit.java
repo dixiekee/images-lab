@@ -8,16 +8,19 @@ import org.apache.hadoop.mapred.InputSplit;
 
 public class ImageSplit implements InputSplit{
 
-	private int offset;
-	private int height;
-	private int width;
-	int startRow;
-	int numRows;
+	private int offset; //determines which byte in the overall image
+			    //to start reading data from
+	private int height; //number of rows in the ImageSplit
+	private int width; //number of columns in the ImageSplit
+	int startRow; //row number of the first line in the InputSplit
+	int numRows; //number of rows in the relevant part of the InputSplit
 	
 	public ImageSplit() {
+
 	}
 
-	public ImageSplit(int offset, int height, int width, int startRow, int numRows) {
+	public ImageSplit(int offset, int height, int width, 
+						int startRow, int numRows) {
 		this.offset = offset;
 		this.height = height;
 		this.width = width;

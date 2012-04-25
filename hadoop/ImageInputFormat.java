@@ -16,83 +16,81 @@ import org.apache.hadoop.mapred.RecordReader;
 import org.apache.hadoop.mapred.Reporter;
 
 
-public class ImageInputFormat extends FileInputFormat<IntWritable, ImageWritable>{
+public class ImageInputFormat 
+         extends FileInputFormat<IntWritable, ImageWritable>{
 
-	public ImageSplit[] getSplits(JobConf conf, int numsplits)
-	{
-		ArrayList<ImageSplit> splits = new ArrayList<ImageSplit>();
-		Path p = ImageInputFormat.getInputPaths(conf)[0];
-		//convert Path to a PGMImage
-		FileSystem fileSys;
+   public ImageSplit[] getSplits(JobConf conf, int numsplits)
+   {
+      ArrayList<ImageSplit> splits = new ArrayList<ImageSplit>();
+      // get the file to process
+      Path p = ImageInputFormat.getInputPaths(conf)[0];
+      try {      
+         FileSystem fileSys = p.getFileSystem(conf);
+         FSDataInputStream inputStream = fileSys.open(p);
+         
+         // get header info to figure out how many ImageSplits to make
+         ImageHeader header = PGMImage.getHeader(inputStream);
+         int imgHeight = header.getHeight();
+         int imgWidth = header.getWidth();
+         int imgOffset = header.getOffset();
+         // add the header as its own ImageSplit
+         splits.add(new ImageSplit(0, 1, imgOffset, 0, 0));
+         
+         int linesPerSplit; 
+         int padding = 64; //default num of rows to use as padding
+         int linesLeft = imgHeight; //lines in image not yet split up
+         int position = 0; //current row being processed
+         int aboveRows, belowRows; //num of rows above/below lines per split to
+                              //ensure edges of image are processed correctly
+         
+         // calculates the height of an ImageSplit, taking into account
+         // the num rows needed above and below the image
+         while (linesLeft > 0) {
+            linesPerSplit = Math.min(linesLeft, 67617/imgWidth);
+            aboveRows = (position - padding < 0) ? position : padding;
+            if (position + linesPerSplit + padding > imgHeight)
+               belowRows = imgHeight - (position + linesPerSplit);
+            else
+               belowRows = padding;
+            linesLeft -= linesPerSplit;
 
-		//read the header to figure out how many ImageSplits to make
-		try {
-			fileSys = p.getFileSystem(conf);
-			FSDataInputStream inputStream = fileSys.open(p);
-			ImageHeader header = PGMImage.getHeader(inputStream);
-			int height = header.getHeight(); //height of whole image (wihtout header)
-			int width = header.getWidth(); //width of whole image (without header)
-			int offset = header.getOffset();
-			splits.add(new ImageSplit(0, 1, offset, 0, 0));
-			int linesPerSplit;
-			int padding = 64;
-			int linesLeft = height;
-			int position = 0;
-			while (linesLeft > 0) {
-				linesPerSplit = Math.min(linesLeft, 67617/width);
-				int frontPadding; //how many rows in front of the stuff you care about
-				int backPadding; //how many rows behind the stuff you care about
-				if (position - padding < 0)
-					frontPadding = position;
-				else
-					frontPadding = padding;
-				if (position + linesPerSplit + padding > height)
-					backPadding = height - (position + linesPerSplit);
-				else
-					backPadding = padding;
-				linesLeft -= linesPerSplit;
+            // modifies the height until splitHeight % 32 == 1
+            // so that dimensions are correct for contrast enhancement
+            int splitHeight = linesPerSplit + aboveRows + belowRows;
+            while (splitHeight % 32 != 1) {
+               if (aboveRows > 0) {
+                  aboveRows++;
+                  splitHeight++;
+                  if (splitHeight % 32 == 1) break;
+               }
+               if (position + linesPerSplit + belowRows + 1 < imgHeight) {
+                   belowRows++;
+                   splitHeight++;
+               }
+            }
+   
+            ImageSplit split = 
+		new ImageSplit(imgOffset + (position - aboveRows)*imgWidth, 
+                linesPerSplit + aboveRows + belowRows, imgWidth, aboveRows, 
+								linesPerSplit);
+   
+            splits.add(split);
+            position += linesPerSplit;
+         }
+         
+      } catch (Exception e) {
+         
+      }
+      
+      return splits.toArray(new ImageSplit[splits.size()]);
+      
+   }
 
-
-                                int splitHeight = linesPerSplit + frontPadding + backPadding;
-                                while (splitHeight % 32 != 1) {
-                                        if (frontPadding > 0) {
-                                                frontPadding++;
-                                                splitHeight++;
-                                                if (splitHeight % 32 == 1) break;
-                                        }
-                                        if (position + linesPerSplit + backPadding + 1 < height) {
-                                                backPadding++;
-                                                splitHeight++;
-                                        }
-                                }
-
-
-				ImageSplit split = new ImageSplit(offset + (position - frontPadding)*width, 
-						linesPerSplit + frontPadding + backPadding, width, frontPadding, linesPerSplit);
-
-
-/*System.out.println("-------linesPerSplit: " + linesPerSplit + " frontPadding: " + frontPadding + " backPadding: " + backPadding);
-System.out.print("offset: " + (offset + (position - frontPadding)*width));
-System.out.print(" height: " + (linesPerSplit + frontPadding + backPadding));
-System.out.print(" width: " + width);
-System.out.print(" startRow: " + frontPadding);
-System.out.println(" numRows: " + linesPerSplit);*/
-
-				splits.add(split);
-				position+=linesPerSplit;
-			}
-		} catch (Exception e) {
-			
-		}
-
-		return splits.toArray(new ImageSplit[splits.size()]);
-
-	}
-
-	@Override
-	public RecordReader<IntWritable, ImageWritable> getRecordReader(InputSplit split,
-			JobConf jobConf, Reporter reporter) throws IOException {
-		return new ImageRecordReader(jobConf, (ImageSplit)split);
-	}
+   @Override
+   public RecordReader<IntWritable, ImageWritable> 
+	getRecordReader(InputSplit split, JobConf jobConf, Reporter reporter)
+							throws IOException {
+      return new ImageRecordReader(jobConf, (ImageSplit)split);
+   }
 
 }

@@ -1,3 +1,7 @@
+/*
+ * A class that stores information contained in the header of an image
+ */
+
 public class ImageHeader {
 	int offset; //where the actual image starts
 	int height; //height of image (without header)

@@ -7,7 +7,9 @@ import org.apache.hadoop.mapred.RecordWriter;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.TaskAttemptContext;
 import org.apache.hadoop.io.BytesWritable;
-public class ImageRecordWriter implements RecordWriter<IntWritable, BytesWritable> {
+
+public class ImageRecordWriter 
+			implements RecordWriter<IntWritable, BytesWritable> {
 
 	DataOutputStream out;
 	
@@ -20,9 +22,12 @@ public class ImageRecordWriter implements RecordWriter<IntWritable, BytesWritabl
 		out.close();		
 	}
 
+	/*
+	 * Writes the bytes of value to the given OutputStream
+	 */
 	@Override
-	public void write(IntWritable key, BytesWritable value) throws IOException {
-		//out.write((key.get()+"\n").getBytes());
+	public void write(IntWritable key, BytesWritable value) 
+							throws IOException {
 		out.write(value.getBytes(), 0, value.getLength());
 	}
 

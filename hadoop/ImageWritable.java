@@ -8,11 +8,11 @@ import org.apache.hadoop.io.Writable;
 
 public class ImageWritable implements Writable{
 
-	int width;
-	int height;
-	byte[] bytes;
-	int startRow;
-	int numRows;
+	int width; //num of cols in the split of the whole image 
+	int height; //num of rows int he split of the whole image
+	byte[] bytes; //holds bytes of data from the image
+	int startRow; //offset row into the whole image
+	int numRows; //number of rows in the split
 	
 	public ImageWritable() {
 
@@ -22,7 +22,7 @@ public class ImageWritable implements Writable{
 	public void readFields(DataInput in) throws IOException {
 		width = in.readInt();
 		height = in.readInt();
-	  bytes = new byte[height * width];
+		bytes = new byte[height * width];
 		in.readFully(bytes);
 		startRow = in.readInt();
 		numRows = in.readInt();

@@ -11,17 +11,18 @@ import org.apache.hadoop.util.Progressable;
 
 public class ImageOutputFormat extends FileOutputFormat<Object, Object>{
 
-	@Override
-	public RecordWriter getRecordWriter(FileSystem fileSys, JobConf conf,
-			String name, Progressable progressable) throws IOException {
-		/*Path file = FileOutputFormat.getTaskOutputPath(conf, name);
-		FSDataOutputStream out = fileSys.create(file, progressable);
-		return new ImageRecordWriter(out);*/
-		
-		 Path file = FileOutputFormat.getTaskOutputPath(conf, name);
-    FileSystem fs = file.getFileSystem(conf);
-    FSDataOutputStream fileOut = fs.create(file, progressable);
-    return new ImageRecordWriter(fileOut);
-	}
+   /*
+    * Returns an ImageRecordWriter that writes to the specified OutputStream
+    */ 
+   @Override
+   public RecordWriter getRecordWriter(FileSystem fileSys, JobConf conf,
+         String name, Progressable progressable) throws IOException {
+
+       Path file = FileOutputFormat.getTaskOutputPath(conf, name);
+       FileSystem fs = file.getFileSystem(conf);
+       FSDataOutputStream fileOut = fs.create(file, progressable);
+
+       return new ImageRecordWriter(fileOut);
+   }
 
 }
